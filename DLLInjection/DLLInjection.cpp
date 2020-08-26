@@ -82,35 +82,37 @@ int main(int argc, char** argv) {
 							DWORD dwExitCode = 0;
 							if (GetExitCodeThread(hThread, &dwExitCode) && dwExitCode) {
 								std::cout << "Injection routine was successful!" << std::endl;
+							} else {
+								std::cout << "Injection routine failed." << std::endl;
 							}
 							CloseHandle(hThread);
 
 							std::cout << std::endl << "Finished injecting" << std::endl;
 						} else {
-							std::cerr << "Unable to create remote thread" << std::endl;
+							std::cerr << "Unable to create remote thread: " << GetLastError() << std::endl;
 							rc = -8;
 						}
 					} else {
-						std::cerr << "Unable to write process memory" << std::endl;
+						std::cerr << "Unable to write process memory: " << GetLastError() << std::endl;
 						rc = -7;
 					}
 					VirtualFreeEx(hProcess, pRemoteMemory, 0, MEM_RELEASE);
 				} else {
-					std::cerr << "Unable to allocate virtual memory" << std::endl;
+					std::cerr << "Unable to allocate virtual memory: " << GetLastError() << std::endl;
 					rc = -6;
 				}
 			} else {
-				std::cerr << "GetProcAddress failed for LoadLibrary" << std::endl;
+				std::cerr << "GetProcAddress failed for LoadLibrary: " << GetLastError() << std::endl;
 				rc = -5;
 			}
 		} else {
-			std::cerr << "Unable to load the kernel library" << std::endl;
+			std::cerr << "Unable to load the kernel library: " << GetLastError() << std::endl;
 			rc = -4;
 		}
 		CloseHandle(hProcess);
 	} else {
 		std::cerr << "Unable to open process ID " << nProcessId
-			<< " for VM operations" << std::endl;
+			<< " for VM operations: " << GetLastError() << std::endl;
 		rc = -3;
 	}
 
