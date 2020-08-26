@@ -81,13 +81,11 @@ int main(int argc, char** argv) {
 							WaitForSingleObject(hThread, INFINITE);
 							DWORD dwExitCode = 0;
 							if (GetExitCodeThread(hThread, &dwExitCode) && dwExitCode) {
-								std::cout << "Injection routine was successful!" << std::endl;
+								std::cout << std::endl << "Injection routine was successful!" << std::endl;
 							} else {
-								std::cout << "Injection routine failed." << std::endl;
+								std::cout << std::endl << "Injection routine failed." << std::endl;
 							}
 							CloseHandle(hThread);
-
-							std::cout << std::endl << "Finished injecting" << std::endl;
 						} else {
 							std::cerr << "Unable to create remote thread: " << GetLastError() << std::endl;
 							rc = -8;
