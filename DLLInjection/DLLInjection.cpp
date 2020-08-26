@@ -79,8 +79,10 @@ int main(int argc, char** argv) {
 							ResumeThread(hThread);
 
 							WaitForSingleObject(hThread, INFINITE);
-							DWORD dwExitCode;
-							GetExitCodeThread(hThread, &dwExitCode);
+							DWORD dwExitCode = 0;
+							if (GetExitCodeThread(hThread, &dwExitCode) && dwExitCode) {
+								std::cout << "Injection routine was successful!" << std::endl;
+							}
 							CloseHandle(hThread);
 
 							std::cout << std::endl << "Finished injecting" << std::endl;
