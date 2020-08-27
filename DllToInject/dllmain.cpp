@@ -2,16 +2,28 @@
 #include <windows.h>
 #include <tchar.h>
 
-BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved ) {
+DWORD CALLBACK ThreadProc(LPVOID param)
+{
+    TCHAR szPath[MAX_PATH], msg[MAX_PATH * 2];
 
-    switch (ul_reason_for_call) {
+    GetModuleFileName(NULL, szPath, MAX_PATH);
+    _stprintf_s(msg, sizeof(msg) / sizeof(TCHAR), _T("We have injected in to the process:\n%s"), szPath);
+
+    return MessageBox(NULL, msg, _T("HOORAY"), MB_ICONINFORMATION | MB_SYSTEMMODAL);
+}
+
+BOOL APIENTRY DllMain(HMODULE hModule, DWORD dwReasonForCall, LPVOID lpReserved) {
+
+    switch (dwReasonForCall) {
         case DLL_PROCESS_ATTACH:
-            MessageBox(NULL, _T("WE ARE IN THE PROCESS"), _T("HOORAY"), MB_ICONQUESTION | MB_SYSTEMMODAL);
+            DisableThreadLibraryCalls(hModule);
+            CreateThread(NULL, 0, ThreadProc, NULL, 0, NULL);
             break;
         case DLL_THREAD_ATTACH:
         case DLL_THREAD_DETACH:
         case DLL_PROCESS_DETACH:
             break;
     }
+
     return TRUE;
 }
